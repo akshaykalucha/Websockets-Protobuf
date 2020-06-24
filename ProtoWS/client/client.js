@@ -13,9 +13,8 @@ ws.on('open', function open() {
     console.log('connected')
     let Message = new Schema.TestMessage();
     Message.setSometext("HIIIIHI")
-    console.log(Message.getSometext(), "this will be sended to server")
     let binData = Message.serializeBinary()
-    console.log(Schema.TestMessage.deserializeBinary(binData).toString())
+    ws.send(binData)
 })
 
 ws.on('close', function close() {
@@ -23,10 +22,7 @@ ws.on('close', function close() {
 })
 
 ws.on('message', function incoming(data, flags) {
-    console.log(data, "this is a buffer value")
-    var bytes = Array.prototype.slice.call(data, 0)
-    ws.send(data)
-    var message = proto.TestMessage.deserializeBinary(bytes)
-    console.log(message.getSometext())
-    ws.close()
+    console.log(data, "message recv in buffer")
+    let recvData = Schema.TestMessage.deserializeBinary(data)
+    console.log(recvData.toString() + ": " + "serialized string value of message recv")
 })

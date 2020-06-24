@@ -20,16 +20,13 @@ const wss = new WebSocket.Server({ server })
 
 wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {
-        console.log(message)
-
+        data = Schema.TestMessage.deserializeBinary(message)
+        console.log(data.toString(), "message recv from client")
+        let newData = new Schema.TestMessage()
+        newData.setSometext(`${data.toString()}, received on server`)
+        console.log(newData.toString(), "sending to client in buffer")
+        ws.send(newData.serializeBinary())
     })
-
-        // var message = new Schema.TestMessage();
-        // message.setSometext('ProtocolBuf received')
-
-        // var bytes = message.serializeBinary()
-        // console.log(bytes)
-        // // ws.send(bytes)
 })
 
 server.listen(7070, function listening() {
